@@ -1,42 +1,91 @@
 import 'package:flutter/material.dart';
-import 'post.dart';
-import 'photos.dart';
 import 'package:provider/provider.dart';
-import 'providers/post_provider.dart';
-import 'providers/photo_provider.dart';
-
+import 'screens/login_screen.dart';
+import 'screens/home_screen.dart';
+import 'providers/login_providers.dart';
+import 'providers/product_provider.dart';
+import 'providers/review_provider.dart';
+import 'providers/cart_provider.dart';
+import 'providers/checkout_provider.dart';
+import 'providers/order_provider.dart';
+import 'providers/profile_provider.dart';
 
 void main() {
   runApp(
-    MultiProvider(providers: [
-      ChangeNotifierProvider(
-        create: (_) => PostProvider(),
+    MultiProvider(
+      providers: [
+        // Mendaftarkan AuthProvider untuk login, auto-login, logout, dan data user
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider()..checkLogin(),
         ),
-      ChangeNotifierProvider(
-        create: (_) => PhotoProvider(),
+
+        // Mendaftarkan ProductProvider untuk produk, kategori, search, filter, dan sorting
+        ChangeNotifierProvider(
+          create: (_) => ProductProvider(),
         ),
-    ],
-    child: const MyApp()
+
+        // Mendaftarkan ReviewProvider untuk ulasan produk
+        ChangeNotifierProvider(
+          create: (_) => ReviewProvider(),
+        ),
+
+        // Mendaftarkan CartProvider untuk keranjang belanja
+        ChangeNotifierProvider(
+          create: (_) => CartProvider(),
+        ),
+
+        // Mendaftarkan CheckoutProvider untuk checkout
+        ChangeNotifierProvider(
+          create: (_) => CheckoutProvider(),
+        ),
+
+        // Mendaftarkan OrderProvider untuk riwayat pesanan
+        ChangeNotifierProvider(
+          create: (_) => OrderProvider(),
+        ),
+
+        // Mendaftarkan ProfileProvider untuk profil
+        ChangeNotifierProvider(
+          create: (_) => ProfileProvider(),
+        ),
+      ],
+      child: const MyApp(),
     ),
   );
 }
 
+// Membuat class utama aplikasi
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // Membuat tampilan utama aplikasi
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pertemuan 8 - Consume API',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      initialRoute: '/',
+      title: 'Uas 2306079',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color.fromARGB(255, 1, 48, 86),
+        ),
+        useMaterial3: true,
+      ),
+
+      // Menentukan halaman awal berdasarkan status login
+      home: Consumer<AuthProvider>(
+        builder: (context, authProvider, child) {
+          if (authProvider.isLogin) {
+            return const HomePage();
+          }
+
+          return const LoginPage();
+        },
+      ),
+
       routes: {
-        '/': (context) => PostPage(),
-        '/photos': (context) => PhotoPage(),
+        '/login': (context) => const LoginPage(),
+        '/home': (context) => const HomePage(),
       },
-      
-    
     );
   }
 }
